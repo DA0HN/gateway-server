@@ -14,7 +14,7 @@ http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
                       value="jdbc:mysql://localhost/gateway_server?createDatabaseIfNotExist=true"/>
             <property name="javax.persistence.jdbc.Driver" value="com.mysql.jdbc.Driver"/>
             <property name="javax.persistence.jdbc.user" value="root"/>
-            <property name="javax.persistence.jdbc.password" value=""/>
+            <property name="javax.persistence.jdbc.password" value="D@ohn6c7cf"/>
             <property name="org.hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="true"/>
