@@ -1,5 +1,6 @@
 package br.edu.ifmt.cba.gateway.app;
 
+import br.edu.ifmt.cba.gateway.database.DatabaseConnection;
 import br.edu.ifmt.cba.gateway.server.Server;
 
 /**
@@ -22,6 +23,9 @@ public class App {
                 System.err.println("A porta deve ser maior que 1024");
                 System.exit(1);
             }
+
+            DatabaseConnection.getEntityManager();
+
             var server = new Server();
             server.listen(port);
         }

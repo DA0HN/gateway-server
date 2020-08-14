@@ -17,18 +17,17 @@ import java.time.format.DateTimeFormatter;
  */
 public class Server {
 
+    private final DateTimeFormatter formatter;
     private BufferedReader in;
     private BufferedWriter out;
-    private final DateTimeFormatter formatter;
     private Socket connection;
 
-    public Server() {
+    public Server() throws IOException {
         this.formatter = DateTimeFormatter.ofPattern("HH:mm:ss.SSSS");
     }
 
     public void listen(int port) {
         boolean exit = false;
-        String msg = null;
 
         try (var server = new ServerSocket(port, 10)){
             // criando um socket para ouvir a porta usando uma fila de tamanho 10
@@ -37,33 +36,39 @@ public class Server {
                 // ficara bloqueado até um cliente se conectar
                 connection = server.accept();
 
-                log(" Conexão estabelecida com: " + connection.getInetAddress().getHostAddress());
-
                 // obtendo os fluxos de entrada e saida
-                out = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()
+                this.out = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()
                 ));
-                in = new BufferedReader(new InputStreamReader(connection.getInputStream(),
-                                                              StandardCharsets.UTF_8
+                this.in = new BufferedReader(new InputStreamReader(connection.getInputStream(),
+                                                                   StandardCharsets.UTF_8
                 ));
 
+                log(" Conexão estabelecida com: " + connection.getInetAddress().getHostAddress());
                 write("Conexão estabelecida com sucesso...");
-                try {
-                    do {
-                        LocalDateTime time = LocalDateTime.now();
-                        System.out.println(time.format(formatter) + " " + msg);
-                        msg = in.readLine();
-                        write("OK");
-                    } while(!msg.equals("bye"));
-                }
-                catch(IOException e) {
-                    System.err.println("Erro: " + e.toString());
-                }
+
+                receiveDataFromGateway();
+
                 System.out.println("Conexão encerrada pelo cliente");
                 exit = true;
                 close();
             }
         }
         catch(Exception e) {
+            System.err.println("Erro: " + e.toString());
+        }
+    }
+
+    private void receiveDataFromGateway() {
+        String msg;
+        try {
+            do {
+                LocalDateTime time = LocalDateTime.now();
+                msg = in.readLine();
+                System.out.println(time.format(formatter) + " " + msg);
+                write("OK");
+            } while(!msg.equals("bye"));
+        }
+        catch(IOException e) {
             System.err.println("Erro: " + e.toString());
         }
     }
