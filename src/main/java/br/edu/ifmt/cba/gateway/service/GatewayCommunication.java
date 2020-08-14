@@ -1,4 +1,4 @@
-package br.edu.ifmt.cba.gateway.server;
+package br.edu.ifmt.cba.gateway.service;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -15,15 +15,16 @@ import java.time.format.DateTimeFormatter;
  * @author daohn on 14/08/2020
  * @project gateway_server
  */
-public class Server {
+public class GatewayCommunication {
 
     private final DateTimeFormatter formatter;
+    private final ReceivedDataService service;
     private BufferedReader in;
     private BufferedWriter out;
-    private Socket connection;
 
-    public Server() throws IOException {
+    public GatewayCommunication(ReceivedDataService service) throws IOException {
         this.formatter = DateTimeFormatter.ofPattern("HH:mm:ss.SSSS");
+        this.service = service;
     }
 
     public void listen(int port) {
@@ -34,7 +35,7 @@ public class Server {
             while(!exit) {
                 log(" Ouvindo na porta: " + port);
                 // ficara bloqueado até um cliente se conectar
-                connection = server.accept();
+                Socket connection = server.accept();
 
                 // obtendo os fluxos de entrada e saida
                 this.out = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()
@@ -46,11 +47,12 @@ public class Server {
                 log(" Conexão estabelecida com: " + connection.getInetAddress().getHostAddress());
                 write("Conexão estabelecida com sucesso...");
 
-                receiveDataFromGateway();
+                awaitDataFromGateway();
 
                 System.out.println("Conexão encerrada pelo cliente");
+
                 exit = true;
-                close();
+                close(connection);
             }
         }
         catch(Exception e) {
@@ -58,13 +60,13 @@ public class Server {
         }
     }
 
-    private void receiveDataFromGateway() {
+    private void awaitDataFromGateway() {
         String msg;
         try {
             do {
                 LocalDateTime time = LocalDateTime.now();
                 msg = in.readLine();
-                System.out.println(time.format(formatter) + " " + msg);
+                log(msg);
                 write("OK");
             } while(!msg.equals("bye"));
         }
@@ -73,9 +75,10 @@ public class Server {
         }
     }
 
-    private void close() throws IOException {
+    private void close(Socket connection) throws IOException {
         in.close();
         out.close();
+        connection.close();
     }
 
     private void write(String mensagem) throws IOException {
@@ -85,11 +88,6 @@ public class Server {
 
     private void log(String info) {
         System.out.println(LocalDateTime.now().format(formatter) + info);
-    }
-
-    private String process(String msg) {
-        String[] parsed = msg.split("!");
-        return parsed[1] + "!" + parsed[0] + "!" + parsed[2] + "\0";
     }
 
 }

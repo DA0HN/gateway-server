@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="2.0">
-
-    <persistence-unit name="Gateway">
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
+http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
+             version="2.1">
+    <persistence-unit name="Gateway" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+        <class>br.edu.ifmt.cba.gateway.model.ReceivedData</class>
+
         <properties>
             <property name="javax.persistence.jdbc.url"
-                      value="jdbc:mysql://localhost:3306/gateway_server?createDatabaseIfNotExist=true&amp;useTimezone=true&amp;serverTimezone=UTC"/>
+                      value="jdbc:mysql://localhost/gateway_server?createDatabaseIfNotExist=true"/>
             <property name="javax.persistence.jdbc.Driver" value="com.mysql.jdbc.Driver"/>
             <property name="javax.persistence.jdbc.user" value="root"/>
             <property name="javax.persistence.jdbc.password" value="D@ohn6c7cf"/>
+            <property name="org.hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="true"/>
             <property name="hibernate.hbm2ddl.auto" value="update"/>

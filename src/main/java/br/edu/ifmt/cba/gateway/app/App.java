@@ -1,7 +1,8 @@
 package br.edu.ifmt.cba.gateway.app;
 
 import br.edu.ifmt.cba.gateway.database.DatabaseConnection;
-import br.edu.ifmt.cba.gateway.server.Server;
+import br.edu.ifmt.cba.gateway.service.GatewayCommunication;
+import br.edu.ifmt.cba.gateway.service.ReceivedDataService;
 
 /**
  * @author daohn on 14/08/2020
@@ -23,11 +24,9 @@ public class App {
                 System.err.println("A porta deve ser maior que 1024");
                 System.exit(1);
             }
-
-            DatabaseConnection.getEntityManager();
-
-            var server = new Server();
-            server.listen(port);
+            new GatewayCommunication(
+                    new ReceivedDataService(DatabaseConnection.getEntityManager())
+            ).listen(port);
         }
         catch(Exception e) {
             System.err.println("Erro: " + e.toString());
