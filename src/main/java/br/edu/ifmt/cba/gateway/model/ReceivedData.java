@@ -1,10 +1,22 @@
 package br.edu.ifmt.cba.gateway.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import java.time.LocalDate;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.List;
+
 
 /**
  * @author daohn on 14/08/2020
@@ -12,6 +24,9 @@ import java.util.List;
  */
 @Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Table(name = "received_data")
 public class ReceivedData {
 
@@ -22,19 +37,10 @@ public class ReceivedData {
     private String from;
     @Column(name = "_to")
     private String to;
-    private LocalDate receivedTime;
-    private LocalDate sendTime;
+    private LocalDateTime receivedTime;
+    private LocalDateTime sendTime;
     @ElementCollection
     @CollectionTable(name = "received_message", joinColumns = @JoinColumn(name = "received_id"))
     private List<String> message;
-
-    public ReceivedData(String from, String to, LocalDate sendTime,
-                        LocalDate receivedTime, List<String> message) {
-        this.from = from;
-        this.to = to;
-        this.sendTime = sendTime;
-        this.receivedTime = receivedTime;
-        this.message = message;
-    }
 
 }

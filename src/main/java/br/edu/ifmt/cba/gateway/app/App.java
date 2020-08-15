@@ -2,6 +2,7 @@ package br.edu.ifmt.cba.gateway.app;
 
 import br.edu.ifmt.cba.gateway.database.DatabaseConnection;
 import br.edu.ifmt.cba.gateway.service.GatewayCommunication;
+import br.edu.ifmt.cba.gateway.service.Protocol;
 import br.edu.ifmt.cba.gateway.service.ReceivedDataService;
 
 /**
@@ -14,7 +15,7 @@ public class App {
         try {
             var port = processArgument(args);
             new GatewayCommunication(
-                    new ReceivedDataService(DatabaseConnection.getEntityManager())
+                    new ReceivedDataService(DatabaseConnection.getEntityManager(), new Protocol())
             ).listen(port);
         }
         catch(Exception e) {

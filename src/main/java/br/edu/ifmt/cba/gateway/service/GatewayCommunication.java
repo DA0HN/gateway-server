@@ -1,5 +1,7 @@
 package br.edu.ifmt.cba.gateway.service;
 
+import br.edu.ifmt.cba.gateway.utils.Logger;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -9,7 +11,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 /**
  * @author daohn on 14/08/2020
@@ -17,23 +18,22 @@ import java.time.format.DateTimeFormatter;
  */
 public class GatewayCommunication {
 
-    private final DateTimeFormatter formatter;
+
     private final ReceivedDataService service;
     private BufferedReader in;
     private BufferedWriter out;
 
-    public GatewayCommunication(ReceivedDataService service) throws IOException {
-        this.formatter = DateTimeFormatter.ofPattern("HH:mm:ss.SSSS");
+    public GatewayCommunication(ReceivedDataService service) {
         this.service = service;
     }
 
     public void listen(int port) {
         boolean exit = false;
 
-        try (var server = new ServerSocket(port, 10)){
+        try(var server = new ServerSocket(port, 10)) {
             // criando um socket para ouvir a porta usando uma fila de tamanho 10
             while(!exit) {
-                log(" Ouvindo na porta: " + port);
+                Logger.log(" Ouvindo na porta: " + port);
                 // ficara bloqueado até um cliente se conectar
                 Socket connection = server.accept();
 
@@ -44,7 +44,8 @@ public class GatewayCommunication {
                                                                    StandardCharsets.UTF_8
                 ));
 
-                log(" Conexão estabelecida com: " + connection.getInetAddress().getHostAddress());
+                Logger.log(
+                        " Conexão estabelecida com: " + connection.getInetAddress().getHostAddress());
                 write("Conexão estabelecida com sucesso...");
 
                 awaitDataFromGateway();
@@ -66,8 +67,14 @@ public class GatewayCommunication {
             do {
                 LocalDateTime time = LocalDateTime.now();
                 msg = in.readLine();
-                log(msg);
-                write("OK");
+                Logger.log(msg);
+
+                if(service.save(msg, time)) {
+                    write("OK");
+                }
+                else {
+                    write("ERRO");
+                }
             } while(!msg.equals("bye"));
         }
         catch(IOException e) {
@@ -81,13 +88,8 @@ public class GatewayCommunication {
         connection.close();
     }
 
-    private void write(String mensagem) throws IOException {
+    protected void write(String mensagem) throws IOException {
         out.write(mensagem + "\n");
         out.flush();
     }
-
-    private void log(String info) {
-        System.out.println(LocalDateTime.now().format(formatter) + info);
-    }
-
 }

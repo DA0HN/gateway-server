@@ -1,6 +1,10 @@
 package br.edu.ifmt.cba.gateway.service;
 
+import br.edu.ifmt.cba.gateway.model.ReceivedData;
+import br.edu.ifmt.cba.gateway.utils.Logger;
+
 import javax.persistence.EntityManager;
+import java.time.LocalDateTime;
 
 /**
  * @author daohn on 14/08/2020
@@ -8,12 +12,25 @@ import javax.persistence.EntityManager;
  */
 public class ReceivedDataService {
 
-    private EntityManager manager;
+    private final EntityManager manager;
+    private final Protocol protocol;
 
-    public ReceivedDataService(EntityManager manager) {
+    public ReceivedDataService(EntityManager manager, Protocol protocol) {
         this.manager = manager;
+        this.protocol = protocol;
     }
 
-
-
+    public boolean save(String data, LocalDateTime time) {
+        try {
+            ReceivedData receivedData = protocol.parse(data, time);
+            manager.getTransaction().begin();
+            manager.persist(receivedData);
+            manager.getTransaction().commit();
+            return true;
+        }
+        catch(ProtocolException e) {
+            Logger.log(e.getMessage());
+            return false;
+        }
+    }
 }
