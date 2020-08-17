@@ -31,8 +31,8 @@ import java.util.List;
 public class ReceivedData {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    //    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long raw;
     @Column(name = "_from")
     private String from;
     @Column(name = "_to")

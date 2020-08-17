@@ -2,7 +2,7 @@ package br.edu.ifmt.cba.gateway.app;
 
 import br.edu.ifmt.cba.gateway.database.DatabaseConnection;
 import br.edu.ifmt.cba.gateway.service.GatewayCommunication;
-import br.edu.ifmt.cba.gateway.service.Protocol;
+import br.edu.ifmt.cba.gateway.protocol.Protocol;
 import br.edu.ifmt.cba.gateway.service.ReceivedDataService;
 
 /**

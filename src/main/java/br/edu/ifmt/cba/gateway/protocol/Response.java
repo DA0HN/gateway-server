@@ -1,13 +1,13 @@
-package br.edu.ifmt.cba.gateway.service;
+package br.edu.ifmt.cba.gateway.protocol;
 
 /**
  * @author daohn on 16/08/2020
  * @project gateway_server
  */
 public class Response {
-    protected Status status;
-    protected String confirmMessage;
-    protected String message;
+    public Status status;
+    public String confirmMessage;
+    public String message;
 
     @Override public String toString() {
         return "Response{" +

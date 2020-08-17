@@ -1,4 +1,4 @@
-package br.edu.ifmt.cba.gateway.service;
+package br.edu.ifmt.cba.gateway.protocol;
 
 /**
  * @author daohn on 14/08/2020
