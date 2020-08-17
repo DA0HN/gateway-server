@@ -2,7 +2,10 @@ package br.edu.ifmt.cba.gateway.service;
 
 import br.edu.ifmt.cba.gateway.model.ReceivedData;
 
+import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Arrays;
 
 import static java.util.Arrays.asList;
@@ -22,9 +25,10 @@ public class Protocol {
         return ReceivedData.builder()
                 .from(values[0])
                 .to(values[1])
+                .raw(Long.parseLong(values[2]))
                 .receivedTime(time)
                 .sendTime(null)
-                .message(asList(Arrays.copyOfRange(values, 2, values.length)))
+                .message(asList(Arrays.copyOfRange(values, 3, values.length)))
                 .build();
     }
     // b8:27:eb:8e:94:f2!b8:27:eb:8e:94:f2!msg!...
@@ -46,7 +50,7 @@ public class Protocol {
                 }
             }
         }
-        var msg = Arrays.copyOfRange(values, 2, values.length);
+        var msg = Arrays.copyOfRange(values, 3, values.length);
         stream(msg).forEach(m -> {
             if(!m.chars().allMatch(Character::isLetterOrDigit)){
                 builder.append("Mensagem possui caracteres inválidos: " + m + "\n");
