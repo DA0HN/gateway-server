@@ -30,31 +30,33 @@ public class Protocol {
     }
     // b8:27:eb:8e:94:f2!b8:27:eb:8e:94:f2!msg!...
     private void validate(String[] values) throws ProtocolException {
-        var builder = new StringBuilder();
-        if(values[0].length() > 18) {
-            builder.append("Tamanho do MAC 'from' inválido: " + values[0] + "\n");
-        }
-        if(values[1].length() > 18) {
-            builder.append("Tamanho do MAC 'to' inválido: " + values[1] + "\n");
-        }
-        for(var value : values) {
-            if(value.contains(":")) {
-                var mac = value.split(":");
-                for(var m : mac) {
-                    if(!m.chars().allMatch(Character::isLetterOrDigit)) {
-                        builder.append("MAC incorreto: " + value + "\n");
+        try {
+            if(values[0].length() > 18) {
+                throw new ProtocolException("Tamanho do MAC 'from' inválido: " + values[0] + "\n");
+            }
+            if(values[1].length() > 18) {
+                throw new ProtocolException("Tamanho do MAC 'to' inválido: " + values[1] + "\n");
+            }
+            for(var value : values) {
+                if(value.contains(":")) {
+                    var mac = value.split(":");
+                    for(var m : mac) {
+                        if(!m.chars().allMatch(Character::isLetterOrDigit)) {
+                            throw new ProtocolException("MAC incorreto: " + value + "\n");
+                        }
                     }
                 }
             }
-        }
-        var msg = Arrays.copyOfRange(values, 3, values.length);
-        stream(msg).forEach(m -> {
-            if(!m.chars().allMatch(Character::isLetterOrDigit)){
-                builder.append("Mensagem possui caracteres inválidos: " + m + "\n");
+            var msg = Arrays.copyOfRange(values, 3, values.length);
+            for(String m : msg) {
+                if(!m.chars().allMatch(Character::isLetterOrDigit)) {
+                    throw new ProtocolException("Mensagem possui caracteres inválidos: " + m + "\n");
+                }
             }
-        });
-        if(builder.length() > 0) {
-            throw new ProtocolException(builder.toString());
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+            throw new ProtocolException(e.getMessage());
         }
     }
 
