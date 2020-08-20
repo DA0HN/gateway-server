@@ -1,6 +1,6 @@
 package br.edu.ifmt.cba.gateway.service;
 
-import br.edu.ifmt.cba.gateway.protocol.Response;
+import br.edu.ifmt.cba.gateway.protocol.send.IMessageToSend;
 import br.edu.ifmt.cba.gateway.utils.Logger;
 
 import java.io.BufferedReader;
@@ -13,7 +13,9 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 
-import static br.edu.ifmt.cba.gateway.protocol.Status.*;
+import static br.edu.ifmt.cba.gateway.protocol.send.Status.CORRUPTED;
+import static br.edu.ifmt.cba.gateway.protocol.send.Status.NEW;
+import static br.edu.ifmt.cba.gateway.protocol.send.Status.REDUNDANT;
 
 /**
  * @author daohn on 14/08/2020
@@ -66,21 +68,23 @@ public class GatewayCommunication {
             do {
                 LocalDateTime time = LocalDateTime.now();
                 msg = in.readLine();
-                Logger.log("Chegou: " + msg);
+                Logger.log("Chegou..: " + msg);
 
                 // encerra a conexão atual
                 if(msg.equals("bye")) break;
 
-                Response response = service.save(msg, time);
+                IMessageToSend response = service.save(msg, time);
 
-                if(NEW.equals(response.status)) {
-                    Logger.log("Enviando: " + response.confirmMessage);
-                    write(response.confirmMessage);
+                if(NEW.equals(response.getStatus())) {
+                    Logger.log("Enviando: " + response.getConfirmMessage());
+                    write(response.getConfirmMessage());
 
-                    Logger.log("Enviando: " + response.message);
-                    write(response.message);
-                } else if(CORRUPTED.equals(response.status) || REDUNDANT.equals(response.status)){
-                    write(response.message);
+                    Logger.log("Enviando: " + response.getMessage());
+                    write(response.getMessage());
+                }
+                else if(CORRUPTED.equals(response.getStatus()) || REDUNDANT.equals(
+                        response.getStatus())) {
+                    write(response.getMessage());
                 }
             } while(true);
         }

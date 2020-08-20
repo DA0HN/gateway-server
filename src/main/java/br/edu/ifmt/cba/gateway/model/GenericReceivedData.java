@@ -28,7 +28,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Table(name = "received_data")
-public class ReceivedData {
+public class GenericReceivedData implements IReceivedData {
 
     @Id
     //    @GeneratedValue(strategy = GenerationType.IDENTITY)

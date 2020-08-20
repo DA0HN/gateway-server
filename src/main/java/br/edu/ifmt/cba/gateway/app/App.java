@@ -1,8 +1,9 @@
 package br.edu.ifmt.cba.gateway.app;
 
 import br.edu.ifmt.cba.gateway.database.DatabaseConnection;
+import br.edu.ifmt.cba.gateway.protocol.receive.projects.GenericMessageIdentifier;
 import br.edu.ifmt.cba.gateway.service.GatewayCommunication;
-import br.edu.ifmt.cba.gateway.protocol.Protocol;
+import br.edu.ifmt.cba.gateway.protocol.receive.ReceiveProtocol;
 import br.edu.ifmt.cba.gateway.service.ReceivedDataService;
 
 /**
@@ -15,7 +16,8 @@ public class App {
         try {
             var port = processArgument(args);
             new GatewayCommunication(
-                    new ReceivedDataService(DatabaseConnection.getEntityManager(), new Protocol())
+                    new ReceivedDataService(DatabaseConnection.getEntityManager(),
+                                            new ReceiveProtocol(new GenericMessageIdentifier()))
             ).listen(port);
         }
         catch(Exception e) {

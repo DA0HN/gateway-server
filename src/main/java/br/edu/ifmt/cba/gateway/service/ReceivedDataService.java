@@ -1,19 +1,22 @@
 package br.edu.ifmt.cba.gateway.service;
 
-import br.edu.ifmt.cba.gateway.model.ReceivedData;
-import br.edu.ifmt.cba.gateway.protocol.Protocol;
-import br.edu.ifmt.cba.gateway.protocol.ProtocolException;
-import br.edu.ifmt.cba.gateway.protocol.Response;
-import br.edu.ifmt.cba.gateway.protocol.Status;
+import br.edu.ifmt.cba.gateway.model.GenericReceivedData;
+import br.edu.ifmt.cba.gateway.model.IReceivedData;
+import br.edu.ifmt.cba.gateway.protocol.receive.IReceiveProtocol;
+import br.edu.ifmt.cba.gateway.protocol.receive.ReceiveProtocol;
+import br.edu.ifmt.cba.gateway.protocol.receive.ProtocolException;
+import br.edu.ifmt.cba.gateway.protocol.send.IMessageToSend;
+import br.edu.ifmt.cba.gateway.protocol.send.Response;
+import br.edu.ifmt.cba.gateway.protocol.send.Status;
 import br.edu.ifmt.cba.gateway.utils.Logger;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static br.edu.ifmt.cba.gateway.protocol.Status.CORRUPTED;
-import static br.edu.ifmt.cba.gateway.protocol.Status.NEW;
-import static br.edu.ifmt.cba.gateway.protocol.Status.REDUNDANT;
+import static br.edu.ifmt.cba.gateway.protocol.send.Status.CORRUPTED;
+import static br.edu.ifmt.cba.gateway.protocol.send.Status.NEW;
+import static br.edu.ifmt.cba.gateway.protocol.send.Status.REDUNDANT;
 
 /**
  * @author daohn on 14/08/2020
@@ -22,17 +25,17 @@ import static br.edu.ifmt.cba.gateway.protocol.Status.REDUNDANT;
 public class ReceivedDataService {
 
     private final EntityManager manager;
-    private final Protocol protocol;
+    private final IReceiveProtocol protocol;
 
-    public ReceivedDataService(EntityManager manager, Protocol protocol) {
+    public ReceivedDataService(EntityManager manager, IReceiveProtocol protocol) {
         this.manager = manager;
         this.protocol = protocol;
     }
 
-    public Response save(String data, LocalDateTime time) {
-        Response response;
+    public IMessageToSend save(String data, LocalDateTime time) {
+        IMessageToSend response;
         try {
-            ReceivedData receivedData = protocol.parse(data, time);
+            GenericReceivedData receivedData = (GenericReceivedData) protocol.parse(data, time);
 
             if(findById(receivedData).isPresent()) {
                 response = generateResponseMessage(NEW, receivedData);
@@ -50,25 +53,26 @@ public class ReceivedDataService {
         return response;
     }
 
-    public Optional<ReceivedData> findById(ReceivedData receivedData) {
-        return Optional.ofNullable(manager.find(receivedData.getClass(), receivedData.getRaw()));
+    public Optional<GenericReceivedData> findById(GenericReceivedData genericReceivedData) {
+        return Optional.ofNullable(manager.find(genericReceivedData.getClass(), genericReceivedData.getRaw()));
     }
 
-    private Response generateResponseMessage(Status status, ReceivedData receivedData) {
+    private IMessageToSend generateResponseMessage(Status status, GenericReceivedData genericReceivedData) {
         var response = new Response();
         switch(status) {
             case NEW:
-                response.confirmMessage = receivedData.getTo() + "!" + receivedData.getFrom() + "!" + "OK";
+                response.setConfirmMessage(genericReceivedData.getTo() + "!" + genericReceivedData.getFrom() +
+                        "!" + "OK");
                 long raw = System.currentTimeMillis();
-                response.message = "b8:27:eb:8e:94:f2" + "!" + "3c:71:bf:5a:b3:48!b8:27" + "!" + raw;
-                response.status = NEW;
+                response.setMessage("b8:27:eb:8e:94:f2" + "!" + "3c:71:bf:5a:b3:48!b8:27" + "!" + raw);
+                response.setStatus(NEW);
                 break;
             case CORRUPTED:
-                response.message = "CORROMPIDO";
-                response.status = CORRUPTED;
+                response.setMessage("CORROMPIDO");
+                response.setStatus(CORRUPTED);
             case REDUNDANT:
-                response.message = "REDUNDANTE";
-                response.status = REDUNDANT;
+                response.setMessage("REDUNDANTE");
+                response.setStatus(REDUNDANT);
         }
         return response;
     }
