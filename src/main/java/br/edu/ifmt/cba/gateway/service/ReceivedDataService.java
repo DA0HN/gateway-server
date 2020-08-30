@@ -1,9 +1,7 @@
 package br.edu.ifmt.cba.gateway.service;
 
 import br.edu.ifmt.cba.gateway.model.GenericReceivedData;
-import br.edu.ifmt.cba.gateway.model.IReceivedData;
 import br.edu.ifmt.cba.gateway.protocol.receive.IReceiveProtocol;
-import br.edu.ifmt.cba.gateway.protocol.receive.ReceiveProtocol;
 import br.edu.ifmt.cba.gateway.protocol.receive.ProtocolException;
 import br.edu.ifmt.cba.gateway.protocol.send.IMessageToSend;
 import br.edu.ifmt.cba.gateway.protocol.send.Response;

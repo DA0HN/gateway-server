@@ -1,10 +1,11 @@
 package br.edu.ifmt.cba.gateway.app;
 
-import br.edu.ifmt.cba.gateway.database.DatabaseConnection;
-import br.edu.ifmt.cba.gateway.protocol.receive.projects.GenericMessageIdentifier;
-import br.edu.ifmt.cba.gateway.service.GatewayCommunication;
-import br.edu.ifmt.cba.gateway.protocol.receive.ReceiveProtocol;
-import br.edu.ifmt.cba.gateway.service.ReceivedDataService;
+import br.edu.ifmt.cba.gateway.socket.Server;
+import br.edu.ifmt.cba.gateway.socket.receive.MessageStore;
+import br.edu.ifmt.cba.gateway.socket.send.MessageFactory;
+
+import static br.edu.ifmt.cba.gateway.socket.MessageStream.entradaDeMensagens;
+import static br.edu.ifmt.cba.gateway.socket.MessageStream.saidaDeMensagens;
 
 /**
  * @author daohn on 14/08/2020
@@ -15,10 +16,9 @@ public class App {
     public static void main(String... args) {
         try {
             var port = processArgument(args);
-            new GatewayCommunication(
-                    new ReceivedDataService(DatabaseConnection.getEntityManager(),
-                                            new ReceiveProtocol(new GenericMessageIdentifier()))
-            ).listen(port);
+            new Thread(new MessageStore(entradaDeMensagens())).start();
+            new Thread(new MessageFactory(saidaDeMensagens())).start();
+            new Server().init(port);
         }
         catch(Exception e) {
             System.err.println("Erro: " + e.toString());
