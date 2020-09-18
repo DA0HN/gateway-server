@@ -1,4 +1,4 @@
-package br.edu.ifmt.cba.gateway.socket;
+package br.edu.ifmt.cba.gateway.socket.exception;
 
 import java.io.IOException;
 import java.util.List;

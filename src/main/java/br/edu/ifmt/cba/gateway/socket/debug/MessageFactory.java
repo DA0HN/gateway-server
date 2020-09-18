@@ -1,5 +1,6 @@
-package br.edu.ifmt.cba.gateway.socket;
+package br.edu.ifmt.cba.gateway.socket.debug;
 
+import br.edu.ifmt.cba.gateway.socket.MessageQueue;
 import br.edu.ifmt.cba.gateway.utils.Logger;
 
 import java.util.concurrent.TimeUnit;

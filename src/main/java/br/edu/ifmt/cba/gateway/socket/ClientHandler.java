@@ -12,9 +12,9 @@ import java.io.PrintWriter;
  */
 public class ClientHandler extends Thread {
 
-    private final Logger         logger;
-    private final MessageQueue   senderQueue;
-    private final MessageQueue   receiverQueue;
+    private final Logger       logger;
+    private final MessageQueue senderQueue;
+    private final MessageQueue receiverQueue;
     private final BufferedReader reader;
     private final PrintWriter    writer;
 

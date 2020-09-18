@@ -1,5 +1,6 @@
-package br.edu.ifmt.cba.gateway.socket;
+package br.edu.ifmt.cba.gateway.socket.debug;
 
+import br.edu.ifmt.cba.gateway.socket.MessageQueue;
 import br.edu.ifmt.cba.gateway.utils.Logger;
 
 import java.sql.Timestamp;
@@ -16,9 +17,9 @@ public class MessageStore extends Thread {
 
     private static int               i = 0;
     private final  DateTimeFormatter formatter;
-    private final  Logger            logger;
-    private final  MessageQueue      senderQueue;
-    private final  MessageQueue      receiverQueue;
+    private final Logger       logger;
+    private final MessageQueue senderQueue;
+    private final MessageQueue receiverQueue;
 
     public MessageStore(String name,
                         Logger logger,

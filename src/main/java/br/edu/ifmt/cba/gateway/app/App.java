@@ -1,8 +1,8 @@
 package br.edu.ifmt.cba.gateway.app;
 
-import br.edu.ifmt.cba.gateway.socket.MessageFactory;
+import br.edu.ifmt.cba.gateway.socket.debug.MessageFactory;
 import br.edu.ifmt.cba.gateway.socket.MessageQueue;
-import br.edu.ifmt.cba.gateway.socket.MessageStore;
+import br.edu.ifmt.cba.gateway.socket.debug.MessageStore;
 import br.edu.ifmt.cba.gateway.socket.Server;
 import br.edu.ifmt.cba.gateway.utils.Logger;
 
