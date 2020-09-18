@@ -1,83 +1,53 @@
 package br.edu.ifmt.cba.gateway.socket;
 
-import br.edu.ifmt.cba.gateway.socket.receive.SocketReceive;
-import br.edu.ifmt.cba.gateway.socket.send.SocketSend;
+import br.edu.ifmt.cba.gateway.utils.Logger;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-
-import static br.edu.ifmt.cba.gateway.socket.MessageStream.entradaDeMensagens;
 
 /**
  * @author daohn on 09/08/2020
  * @project socket_java
  */
-public class Server {
-    private final List<Thread> ioWorkers = new ArrayList<>();
+public class Server extends Thread {
 
-    public void init(int port) {
-        try {
-            createWorkers();
-            // criando um socket para ouvir a porta usando uma fila de tamanho 10
-            ServerSocket server = new ServerSocket(port, 10);
-            Socket connection;
-            final DateTimeFormatter formatter = DateTimeFormatter
-                    .ofPattern("HH:mm:ss.SSSS");
+    private final Logger       logger;
+    private final ServerSocket server;
+    private final MessageQueue senderQueue;
+    private final MessageQueue receiverQueue;
 
-            System.out.println(
-                    LocalDateTime.now().format(formatter) + " Ouvindo na porta: " + port);
-            //noinspection InfiniteLoopStatement
-            while(true) {
-                try {
-                    // ficara bloqueado até um cliente se conectar
-                    connection = server.accept();
-                    var reader = new BufferedReader(
-                            new InputStreamReader(connection.getInputStream(),
-                                                  StandardCharsets.UTF_8
-                            )
-                    );
-                    var writer = new BufferedWriter(
-                            new OutputStreamWriter(connection.getOutputStream()));
-
-                    for(var worker : ioWorkers)
-                        ((IOWorker)worker).addMetadata(new ServerMetadata(connection, reader, writer));
-
-                    System.out.println(LocalDateTime.now().format(formatter) +
-                                               " Conexão estabelecida com: " + connection.getInetAddress().getHostAddress());
-                }
-                catch(Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        catch(Exception e) {
-            System.err.println("Erro: " + e.toString());
-        }
+    public Server(int port,
+                  MessageQueue senderQueue,
+                  MessageQueue receiverQueue) throws IOException {
+        super("Servidor");
+        this.logger        = new Logger();
+        this.server        = new ServerSocket(port);
+        this.senderQueue   = senderQueue;
+        this.receiverQueue = receiverQueue;
+        logger.log("Conexão criada na porta " + port);
     }
 
-    private void createWorkers() {
-        var sender1 = new SocketSend(MessageStream.saidaDeMensagens());
-        var receive1 = new SocketReceive(entradaDeMensagens());
-//        var receive2 = new SocketReceive(entradaDeMensagens());
+    @Override public void run() {
+        while(true) {
+            try{
+                Socket client = server.accept();
+                logger.log("Novo cliente conectado " + client.getInetAddress().getHostAddress());
 
+                var reader = new BufferedReader(
+                        new InputStreamReader(client.getInputStream()));
+                var writer = new PrintWriter(client.getOutputStream(), true);
 
-//        sender1.setName("Sender_1");
-//        receive1.setName("Receiver_1");
-//        receive2.setName("Receiver_2");
-//
-        ioWorkers.add(sender1);
-        ioWorkers.add(receive1);
-//        ioWorkers.add(receive2);
-
-        ioWorkers.forEach(Thread::start);
+                new Thread(new ClientHandler("Cliente", logger,
+                                             senderQueue, receiverQueue, reader, writer
+                )).start();
+            }
+            catch(Exception e) {
+                System.err.println("Erro: " + e.toString());
+            }
+        }
     }
 }

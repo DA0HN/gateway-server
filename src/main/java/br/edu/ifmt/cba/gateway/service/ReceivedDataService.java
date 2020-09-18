@@ -24,6 +24,7 @@ public class ReceivedDataService {
 
     private final EntityManager manager;
     private final IReceiveProtocol protocol;
+    private final Logger logger = new Logger();
 
     public ReceivedDataService(EntityManager manager, IReceiveProtocol protocol) {
         this.manager = manager;
@@ -45,7 +46,7 @@ public class ReceivedDataService {
             manager.getTransaction().commit();
         }
         catch(ProtocolException e) {
-            Logger.log(e.getMessage());
+            logger.log(e.getMessage());
             response = generateResponseMessage(CORRUPTED, null);
         }
         return response;

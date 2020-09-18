@@ -1,11 +1,10 @@
 package br.edu.ifmt.cba.gateway.app;
 
+import br.edu.ifmt.cba.gateway.socket.MessageFactory;
+import br.edu.ifmt.cba.gateway.socket.MessageQueue;
+import br.edu.ifmt.cba.gateway.socket.MessageStore;
 import br.edu.ifmt.cba.gateway.socket.Server;
-import br.edu.ifmt.cba.gateway.socket.receive.MessageStore;
-import br.edu.ifmt.cba.gateway.socket.send.MessageFactory;
-
-import static br.edu.ifmt.cba.gateway.socket.MessageStream.entradaDeMensagens;
-import static br.edu.ifmt.cba.gateway.socket.MessageStream.saidaDeMensagens;
+import br.edu.ifmt.cba.gateway.utils.Logger;
 
 /**
  * @author daohn on 14/08/2020
@@ -15,10 +14,18 @@ public class App {
 
     public static void main(String... args) {
         try {
+            var logger = new Logger();
+            var receiverQueue = new MessageQueue(logger);
+            var senderQueue = new MessageQueue(logger);
+
             var port = processArgument(args);
-            new Thread(new MessageStore(entradaDeMensagens())).start();
-            new Thread(new MessageFactory(saidaDeMensagens())).start();
-            new Server().init(port);
+
+            new MessageFactory(senderQueue).start();
+            new MessageStore("Store", logger, senderQueue, receiverQueue).start();
+            new Server(port,
+                       senderQueue,
+                       receiverQueue
+            ).start();
         }
         catch(Exception e) {
             System.err.println("Erro: " + e.toString());

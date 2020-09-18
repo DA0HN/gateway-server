@@ -14,26 +14,40 @@ public class MessageQueue {
     private static final int CAPACITY = 10;
 
     private final Queue<String> queue;
-    private boolean isEmpty = true;
+    private final Logger        logger;
+    private final boolean       debug;
+    private       boolean       isEmpty = true;
 
-    public MessageQueue() {
-        this.queue = new LinkedList<>();
+    public MessageQueue(Logger logger, boolean debug) {
+        this.logger = logger;
+        this.debug  = debug;
+        this.queue  = new LinkedList<>();
+    }
+
+    public MessageQueue(Logger logger) {
+        this(logger, true);
+    }
+
+    private void log(String msg) {
+        if(debug) {
+            logger.log(msg);
+        }
     }
 
     public synchronized void enqueue(String msg) {
         try {
             while(queue.size() == CAPACITY) {
-                Logger.log(Thread.currentThread().getName() + ": Buffer is full," +
-                                   " waiting...");
+                log(Thread.currentThread().getName() + ": Buffer is full," +
+                            " waiting...");
                 wait();
             }
-            Logger.log(Thread.currentThread().getName() + ": added " + msg
-                               + " into queue"
+            log(Thread.currentThread().getName() + ": added " + msg
+                        + " into queue"
             );
             queue.add(msg);
             // Signal consumer thread that, buffer has element now
-            Logger.log(Thread.currentThread().getName()
-                               + ": Signalling that buffer is no more empty now");
+            log(Thread.currentThread().getName()
+                        + ": Signalling that buffer is no more empty now");
             // Communicate waiting thread that queue is not empty now
             isEmpty = false;
             notifyAll();
@@ -65,8 +79,8 @@ public class MessageQueue {
         }
         // Se houver mais de 1 elemento na fila não há necessidade
         // de acionar a flag isEmpty
-        Logger.log(Thread.currentThread().getName()
-                           + ": Queue size " + queue.size());
+        log(Thread.currentThread().getName()
+                    + ": Queue size " + queue.size());
         ref = queue.remove();
         if(queue.size() == CAPACITY - 1) {
             notifyAll();

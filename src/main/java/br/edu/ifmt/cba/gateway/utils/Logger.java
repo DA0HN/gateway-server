@@ -1,5 +1,6 @@
 package br.edu.ifmt.cba.gateway.utils;
 
+import java.io.PrintStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -8,14 +9,19 @@ import java.time.format.DateTimeFormatter;
  * @project gateway_server
  */
 public class Logger {
-    private static final DateTimeFormatter formatter;
+    private final DateTimeFormatter formatter;
+    private final        PrintStream       stream;
 
-    static {
-        formatter = DateTimeFormatter.ofPattern("HH:mm:ss.SSSS");
+    public Logger(PrintStream stream) {
+        this.stream = stream;
+        this.formatter = DateTimeFormatter.ofPattern("HH:mm:ss.SSSS");
     }
 
-    public static void log(String info) {
-        System.out.println(LocalDateTime.now().format(formatter) + " " + info);
+    public Logger() {
+        this(System.out);
     }
 
+    public void log(String message) {
+        stream.println("> " + LocalDateTime.now().format(formatter) + " " + message);
+    }
 }
