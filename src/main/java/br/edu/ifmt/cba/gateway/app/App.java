@@ -1,9 +1,9 @@
 package br.edu.ifmt.cba.gateway.app;
 
-import br.edu.ifmt.cba.gateway.socket.debug.MessageFactory;
 import br.edu.ifmt.cba.gateway.socket.MessageQueue;
-import br.edu.ifmt.cba.gateway.socket.debug.MessageStore;
 import br.edu.ifmt.cba.gateway.socket.Server;
+import br.edu.ifmt.cba.gateway.socket.debug.MessageFactory;
+import br.edu.ifmt.cba.gateway.socket.debug.MessageStore;
 import br.edu.ifmt.cba.gateway.utils.Logger;
 
 /**
@@ -15,8 +15,8 @@ public class App {
     public static void main(String... args) {
         try {
             var logger = new Logger();
-            var receiverQueue = new MessageQueue(logger);
-            var senderQueue = new MessageQueue(logger);
+            var receiverQueue = new MessageQueue(logger, false);
+            var senderQueue = new MessageQueue(logger, false);
 
             var port = processArgument(args);
 

@@ -7,6 +7,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.StringJoiner;
 import java.util.TimeZone;
 
 /**
@@ -49,23 +50,34 @@ public class MessageStore extends Thread {
         LocalDateTime time = LocalDateTime.now();
 
         String msg = receiverQueue.dequeue();
+
+        var metadata = msg.split("!");
+
         logger.log("Mensagem: " + msg);
-        //        var timestamp = Long.parseLong(msg.split("!")[2]);
-        var timestamp = Long.parseLong(msg);
+                var timestamp = Long.parseLong(metadata[2]);
+//        var timestamp = Long.parseLong(msg);
         long now = Timestamp.valueOf(time).getTime();
         var triggerTime = LocalDateTime
                 .ofInstant(Instant.ofEpochMilli(timestamp),
                            TimeZone.getDefault().toZoneId()
                 );
         logger.log("\t\tFoi gerada em: " + triggerTime.format(formatter));
-        //        Logger.log("\t\tDemorou: " + ((now / 1000) - timestamp) + "ms para " +
-        //                           "chegar");
-        logger.log("\t\tDemorou: " + (System.currentTimeMillis() - timestamp) + "ms para " +
-                           "chegar");
+                logger.log("\t\tDemorou: " + ((now / 1000) - timestamp) + "ms para " +
+                                   "chegar");
+//        logger.log("\t\tDemorou: " + (System.currentTimeMillis() - timestamp) + "ms para " +
+//                           "chegar");
 
-        var toSend = "b8:27:eb:8e:94:f2!3c:71:bf:5a:b3:48!Mensagem_" + (i++) + "!"
-                + System.currentTimeMillis();
-        senderQueue.enqueue(toSend);
+        // gera uma mensagem de OK confirmação da chegada da mensagem
+        var from = "b8:27:eb:8e:94:f2";
+        var to = metadata[0];
+        var content = "OK";
+        var finalMessage = new StringJoiner("!")
+                .add(from)
+                .add(to)
+                .add(content)
+                .toString();
+        logger.log("Confirmação da mensagem gerada '" + finalMessage + "' e enfileirada.");
+        senderQueue.enqueue(finalMessage);
     }
 
 }

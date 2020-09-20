@@ -25,12 +25,12 @@ public class MessageFactory extends Thread {
         while(true) {
             try {
                 long timestamp = System.currentTimeMillis();
-                //                var msg = "b8:27:eb:8e:94:f2!3c:71:bf:5a:b3:48!Mensagem_" + (i++) + "!"
-                //                        + timestamp;
-                var msg = (i++) + "!" + timestamp;
+                var msg = "b8:27:eb:8e:94:f2!3c:71:bf:5a:b3:48!Mensagem_" + (i++) + "!"
+                        + timestamp;
                 logger.log("Mensagem criada: " + msg);
+
                 senderQueue.enqueue(msg);
-                TimeUnit.SECONDS.sleep(20);
+                TimeUnit.SECONDS.sleep(180);
             }
             catch(InterruptedException e) {
                 e.printStackTrace();
