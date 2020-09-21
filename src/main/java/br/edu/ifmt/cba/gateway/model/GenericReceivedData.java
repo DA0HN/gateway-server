@@ -9,8 +9,6 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
@@ -32,15 +30,15 @@ public class GenericReceivedData implements IReceivedData {
 
     @Id
     //    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long raw;
+    private Long          raw;
     @Column(name = "_from")
-    private String from;
+    private String        from;
     @Column(name = "_to")
-    private String to;
+    private String        to;
     private LocalDateTime receivedTime;
     private LocalDateTime sendTime;
     @ElementCollection
     @CollectionTable(name = "received_message", joinColumns = @JoinColumn(name = "received_id"))
-    private List<String> message;
+    private List<String>  message;
 
 }

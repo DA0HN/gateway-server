@@ -3,7 +3,7 @@ package br.edu.ifmt.cba.gateway.app;
 import br.edu.ifmt.cba.gateway.socket.MessageQueue;
 import br.edu.ifmt.cba.gateway.socket.Server;
 import br.edu.ifmt.cba.gateway.socket.debug.MessageFactory;
-import br.edu.ifmt.cba.gateway.socket.debug.MessageStore;
+import br.edu.ifmt.cba.gateway.socket.debug.MessageDebug;
 import br.edu.ifmt.cba.gateway.utils.Logger;
 
 /**
@@ -21,7 +21,7 @@ public class App {
             var port = processArgument(args);
 
             new MessageFactory(senderQueue).start();
-            new MessageStore("Store", logger, senderQueue, receiverQueue).start();
+            new MessageDebug("Store", logger, senderQueue, receiverQueue).start();
             new Server(port,
                        senderQueue,
                        receiverQueue

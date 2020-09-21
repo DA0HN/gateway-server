@@ -2,7 +2,7 @@ package br.edu.ifmt.cba.gateway.socket;
 
 import br.edu.ifmt.cba.gateway.utils.Logger;
 
-import java.util.LinkedList;
+import java.util.ArrayDeque;
 import java.util.Queue;
 
 /**
@@ -21,7 +21,7 @@ public class MessageQueue {
     public MessageQueue(Logger logger, boolean debug) {
         this.logger = logger;
         this.debug  = debug;
-        this.queue  = new LinkedList<>();
+        this.queue  = new ArrayDeque<>();
     }
 
     public MessageQueue(Logger logger) {
@@ -37,17 +37,13 @@ public class MessageQueue {
     public synchronized void enqueue(String msg) {
         try {
             while(queue.size() == CAPACITY) {
-                log(Thread.currentThread().getName() + ": Buffer is full," +
-                            " waiting...");
+                log(Thread.currentThread().getName() + ": Buffer is full," + " waiting...");
                 wait();
             }
-            log(Thread.currentThread().getName() + ": added " + msg
-                        + " into queue"
-            );
+            log(Thread.currentThread().getName() + ": added " + msg + "into queue");
             queue.add(msg);
             // Signal consumer thread that, buffer has element now
-            log(Thread.currentThread().getName()
-                        + ": Signalling that buffer is no more empty now");
+            log(Thread.currentThread().getName() + ": Signalling that buffer is no more empty now");
             // Communicate waiting thread that queue is not empty now
             isEmpty = false;
             notifyAll();
@@ -79,8 +75,7 @@ public class MessageQueue {
         }
         // Se houver mais de 1 elemento na fila não há necessidade
         // de acionar a flag isEmpty
-        log(Thread.currentThread().getName()
-                    + ": Queue size " + queue.size());
+        log(Thread.currentThread().getName() + ": Queue size " + queue.size());
         ref = queue.remove();
         if(queue.size() == CAPACITY - 1) {
             notifyAll();
