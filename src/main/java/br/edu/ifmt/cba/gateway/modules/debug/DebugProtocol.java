@@ -3,7 +3,6 @@ package br.edu.ifmt.cba.gateway.modules.debug;
 import br.edu.ifmt.cba.gateway.model.DebugData;
 import br.edu.ifmt.cba.gateway.model.IReceivedData;
 import br.edu.ifmt.cba.gateway.protocol.receive.IReceiveProtocol;
-import br.edu.ifmt.cba.gateway.protocol.receive.ProtocolException;
 import br.edu.ifmt.cba.gateway.utils.Logger;
 
 import java.time.Instant;
