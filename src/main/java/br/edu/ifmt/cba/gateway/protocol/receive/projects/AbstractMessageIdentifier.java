@@ -29,7 +29,8 @@ public abstract class AbstractMessageIdentifier {
                     }
                 }
             }
-            var msg = Arrays.copyOfRange(content, 3, content.length);
+            // b8:27:eb:8e:94:f2 ! b8:27:eb:8e:94:f2 ! project ! raw ! msg !...
+            var msg = Arrays.copyOfRange(content, 4, content.length);
             for(var m : msg) {
                 if(!m.chars().allMatch(Character::isLetterOrDigit)) {
                     throw new UnidentifiedMessageException(

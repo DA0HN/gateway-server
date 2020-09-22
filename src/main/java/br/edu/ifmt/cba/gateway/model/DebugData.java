@@ -26,15 +26,15 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Table(name = "received_data")
-public class GenericReceivedData implements IReceivedData {
+public class DebugData implements IReceivedData {
 
     @Id
-    //    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long          raw;
     @Column(name = "_from")
     private String        from;
     @Column(name = "_to")
     private String        to;
+    private Long          elapsedTime;
     private LocalDateTime receivedTime;
     private LocalDateTime sendTime;
     @ElementCollection
