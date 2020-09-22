@@ -7,7 +7,8 @@ import br.edu.ifmt.cba.gateway.protocol.receive.ProtocolException;
  * @project gateway_server
  */
 public class GenericMessageIdentifier extends AbstractMessageIdentifier {
-    @Override public void identify(String[] content) throws ProtocolException {
+    @Override public void identify(String data) throws ProtocolException {
+        var content = data.split("!");
         defaultRecognize(content);
     }
 }

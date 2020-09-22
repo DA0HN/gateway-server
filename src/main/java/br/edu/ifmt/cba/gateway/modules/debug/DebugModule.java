@@ -18,24 +18,38 @@ import static br.edu.ifmt.cba.gateway.protocol.send.Status.NEW;
  */
 public class DebugModule implements IModule {
 
-    private final Logger           logger;
-    private final DebugProtocol    protocol;
-    private final DebugDataService service;
-    private final DebugBroadcaster broadcaster;
+    private final Logger                 logger;
+    private final DebugProtocol          protocol;
+    private final DebugDataService       service;
+    private final DebugBroadcaster       broadcaster;
+    private final DebugMessageIdentifier identifier;
 
     public DebugModule(EntityManager manager, MessageQueue senderQueue) {
         this.broadcaster = new DebugBroadcaster(senderQueue);
-        this.protocol    = new DebugProtocol(new DebugMessageIdentifier());
+        this.identifier  = new DebugMessageIdentifier();
+        this.protocol    = new DebugProtocol();
         this.service     = new DebugDataService(manager);
         this.logger      = new Logger();
     }
 
+    /**
+     * @param message mensagem recebida
+     */
     @Override public void execute(String message) {
+        // b8:27:eb:8e:94:f2 ! b8:27:eb:8e:94:f2 ! project ! msg !...
         Status status = null;
         try {
+            // analisa se a mensagem não possui nenhuma deformação
+            // caso a mensagem contenha alguma deformação
+            // gera uma exceção e muda o status para CORRUPTED
+            identifier.identify(message);
+            // cria um objeto DebugData com os dados contidos na string
             var data = (DebugData) protocol.parse(message);
+            // checa se a mensagem já foi inserida no banco e armazena seu status
             status = service.getStatus(data);
+            // insere a mensagem no banco
             service.save(data);
+            // caso o status seja NEW cria um reply para o gateway
             if(NEW.equals(status)) {
                 broadcaster.createReply(data);
             }

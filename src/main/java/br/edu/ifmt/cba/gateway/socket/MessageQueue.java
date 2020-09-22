@@ -49,7 +49,6 @@ public class MessageQueue {
                 // Communicate waiting thread that queue is not empty now
                 isEmpty = false;
             } else {
-                System.out.println("\t\t\t\tEU JÁ FUI ENVIADO\n\n\n");
                 log(Thread.currentThread().getName() + ": the message '" + msg + "' not added");
             }
             notifyAll();

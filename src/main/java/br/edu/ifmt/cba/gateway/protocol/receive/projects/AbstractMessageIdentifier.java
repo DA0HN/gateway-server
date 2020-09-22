@@ -9,17 +9,28 @@ import java.util.Arrays;
  * @project gateway_server
  */
 public abstract class AbstractMessageIdentifier {
-    public abstract void identify(String[] content) throws ProtocolException;
+    /**
+     * @param data conteúdo que será analisado
+     * @throws ProtocolException caso a mensagem contenha alguma deformação gera uma exceção
+     */
+    public abstract void identify(String data) throws ProtocolException;
 
-    protected void defaultRecognize(String[] content) throws UnidentifiedMessageException {
+    /**
+     * realiza uma análise dos dados constantes da mensagem. O MAC de quem enviou, o MAC de quem
+     * recebeu e o projeto. O resto do conteúdo da mensagem pode variar e deve ser implementado
+     * separadamente
+     * @param parsedContent mensagem que será analisada
+     * @throws UnidentifiedMessageException caso a análise encontre algum erro, lança exceção
+     */
+    protected void defaultRecognize(String[] parsedContent) throws UnidentifiedMessageException {
         try {
-            if(content[0].length() > 18) {
-                throw new UnidentifiedMessageException("Tamanho do MAC 'from' inválido: " + content[0] + "\n");
+            if(parsedContent[0].length() > 18) {
+                throw new UnidentifiedMessageException("Tamanho do MAC 'from' inválido: " + parsedContent[0] + "\n");
             }
-            if(content[1].length() > 18) {
-                throw new UnidentifiedMessageException("Tamanho do MAC 'to' inválido: " + content[1] + "\n");
+            if(parsedContent[1].length() > 18) {
+                throw new UnidentifiedMessageException("Tamanho do MAC 'to' inválido: " + parsedContent[1] + "\n");
             }
-            for(var value : content) {
+            for(var value : parsedContent) {
                 if(value.contains(":")) {
                     var mac = value.split(":");
                     for(var m : mac) {
@@ -30,7 +41,7 @@ public abstract class AbstractMessageIdentifier {
                 }
             }
             // b8:27:eb:8e:94:f2 ! b8:27:eb:8e:94:f2 ! project ! raw ! msg !...
-            var msg = Arrays.copyOfRange(content, 4, content.length);
+            var msg = Arrays.copyOfRange(parsedContent, 4, parsedContent.length);
             for(var m : msg) {
                 if(!m.chars().allMatch(Character::isLetterOrDigit)) {
                     throw new UnidentifiedMessageException(

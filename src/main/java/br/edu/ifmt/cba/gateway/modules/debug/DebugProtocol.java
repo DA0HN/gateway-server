@@ -4,7 +4,6 @@ import br.edu.ifmt.cba.gateway.model.DebugData;
 import br.edu.ifmt.cba.gateway.model.IReceivedData;
 import br.edu.ifmt.cba.gateway.protocol.receive.IReceiveProtocol;
 import br.edu.ifmt.cba.gateway.protocol.receive.ProtocolException;
-import br.edu.ifmt.cba.gateway.protocol.receive.projects.AbstractMessageIdentifier;
 import br.edu.ifmt.cba.gateway.utils.Logger;
 
 import java.time.Instant;
@@ -21,14 +20,9 @@ import static java.util.Arrays.asList;
  */
 public class DebugProtocol implements IReceiveProtocol {
 
-    private final Logger                    logger = new Logger();
-    private final AbstractMessageIdentifier messageIdentifier;
+    private final Logger logger = new Logger();
 
-    public DebugProtocol(AbstractMessageIdentifier messageIdentifier) {
-        this.messageIdentifier = messageIdentifier;
-    }
-
-    public IReceivedData parse(String data) throws ProtocolException {
+    public IReceivedData parse(String data) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss.SSSS");
         String[] values = data.split("!");
 
@@ -40,9 +34,6 @@ public class DebugProtocol implements IReceiveProtocol {
         long elapsedTime = System.currentTimeMillis() - rawSendTime;
         logger.log("\t\tFoi gerada em: " + sendTime.format(formatter));
         logger.log("\t\tDemorou: " + elapsedTime + "ms para chegar");
-
-        // b8:27:eb:8e:94:f2 ! b8:27:eb:8e:94:f2 ! project ! msg !...
-        messageIdentifier.identify(values);
 
         return DebugData.builder()
                 .from(values[0])

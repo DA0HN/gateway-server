@@ -15,6 +15,12 @@ public class DebugBroadcaster {
         this.senderQueue = senderQueue;
     }
 
+    /**
+     * cria uma resposta para o gateway baseado na mensagem que recebeu,
+     * a primeira é uma confirmação para o dispositivo que enviou e o segundo
+     * para fins de teste gera uma mensagem para um dispositivo em especifico
+     * @param debugData objeto que contém os dados da mensagem que chegou
+     */
     public void createReply(DebugData debugData) {
         var confirmMessage = debugData.getTo() + "!" + debugData.getFrom() + "!" +  "OK";
         long raw = System.currentTimeMillis();

@@ -20,6 +20,13 @@ public class ModuleFactory {
         this.senderQueue   = senderQueue;
     }
 
+    /**
+     *
+     * @param project id do projeto
+     * @return módulo que possui as regras para tratar a mensagem que chegou
+     * @throws ModuleException lança exceção caso o projeto não seja reconhecido ou caso
+     * ocorra algum erro durante a instanciação do módulo
+     */
     public IModule createProtocol(String project) throws ModuleException {
         try {
             switch(project) {
