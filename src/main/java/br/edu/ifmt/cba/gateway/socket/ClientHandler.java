@@ -17,18 +17,28 @@ public class ClientHandler extends Thread {
     private final MessageQueue   receiverQueue;
     private final BufferedReader reader;
     private final PrintWriter    writer;
+    private final boolean debug;
 
     public ClientHandler(String name, Logger logger,
                          MessageQueue senderQueue,
                          MessageQueue receiverQueue,
                          BufferedReader reader,
-                         PrintWriter writer) {
+                         PrintWriter writer, boolean debug) {
         super(name);
         this.logger        = logger;
         this.senderQueue   = senderQueue;
         this.receiverQueue = receiverQueue;
         this.reader        = reader;
         this.writer        = writer;
+        this.debug         = debug;
+    }
+
+    public ClientHandler(String name, Logger logger,
+                         MessageQueue senderQueue,
+                         MessageQueue receiverQueue,
+                         BufferedReader reader,
+                         PrintWriter writer) {
+        this(name, logger, senderQueue, receiverQueue, reader, writer, false);
     }
 
     @Override public void run() {
@@ -52,10 +62,10 @@ public class ClientHandler extends Thread {
     private void hasMessageToRead() throws IOException {
         String line = reader.readLine();
         if(line != null) {
-            logger.log("Recv: Chegou: " + line);
-            logger.log("Recv: Enviando confirmação de mensagem 'OK'");
+            log("Recv: Chegou: " + line);
+            log("Recv: Enviando confirmação de mensagem 'OK'");
             writer.println("OK");
-            logger.log("Recv: 'OK' enviado.");
+            log("Recv: 'OK' enviado.");
 
             receiverQueue.enqueue(line);
         }
@@ -63,12 +73,18 @@ public class ClientHandler extends Thread {
 
     private void hasMessageToSend() throws IOException {
         var message = senderQueue.dequeue();
-        logger.log("Sender: Enviando mensagem...");
+        log("Sender: Enviando mensagem...");
         writer.println(message);
-        logger.log("Sender: Mensagem enviada");
-        logger.log("Sender: Esperando resposta...");
+        log("Sender: Mensagem enviada");
+        log("Sender: Esperando resposta...");
 
         String response = reader.readLine();
-        logger.log("Sender: Chegou uma resposta para '" + message + "' -> " + response);
+        log("Sender: Chegou uma resposta para '" + message + "' -> " + response);
+    }
+
+    private void log(String message) {
+        if(debug) {
+            logger.log(message);
+        }
     }
 }
