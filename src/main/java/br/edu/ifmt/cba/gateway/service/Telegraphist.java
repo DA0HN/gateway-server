@@ -7,9 +7,6 @@ import br.edu.ifmt.cba.gateway.socket.MessageQueue;
 /**
  * @author daohn on 21/09/2020
  * @project gateway_server
- */
-
-/**
  * Thread responsável por receber todas as mensagens que chegam
  * e são inseridas na fila de recebimento (receiverQueue)
  */
@@ -41,6 +38,9 @@ public class Telegraphist extends Thread {
             }
             catch(ModuleException e) {
                 e.printStackTrace();
+            }
+            catch(IndexOutOfBoundsException e) {
+                System.err.println("Não foi possível extrair o projeto " + e.getMessage());
             }
         }
     }

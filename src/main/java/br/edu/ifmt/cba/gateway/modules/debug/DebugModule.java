@@ -58,6 +58,10 @@ public class DebugModule implements IModule {
             status = Status.CORRUPTED;
             System.err.println(e.getMessage());
         }
+        catch(Exception e) {
+            status = Status.ERROR;
+            System.err.println(e.getMessage());
+        }
         finally {
             logger.log("\n\tMensagem: " + message + "\n\tStatus: " + status);
         }

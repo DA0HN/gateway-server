@@ -9,4 +9,5 @@ public enum Status {
     CORRUPTED,
     NEW,
     REDUNDANT,
+    ERROR,
 }

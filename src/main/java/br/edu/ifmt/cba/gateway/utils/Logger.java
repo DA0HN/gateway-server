@@ -10,10 +10,10 @@ import java.time.format.DateTimeFormatter;
  */
 public class Logger {
     private final DateTimeFormatter formatter;
-    private final        PrintStream       stream;
+    private final PrintStream       stream;
 
     public Logger(PrintStream stream) {
-        this.stream = stream;
+        this.stream    = stream;
         this.formatter = DateTimeFormatter.ofPattern("HH:mm:ss.SSSS");
     }
 
