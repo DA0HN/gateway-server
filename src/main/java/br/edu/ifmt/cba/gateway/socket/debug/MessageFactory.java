@@ -30,7 +30,7 @@ public class MessageFactory extends Thread {
                 logger.log("Mensagem criada: " + msg);
 
                 senderQueue.enqueue(msg);
-                TimeUnit.SECONDS.sleep(180);
+                TimeUnit.SECONDS.sleep(10);
             }
             catch(InterruptedException e) {
                 e.printStackTrace();

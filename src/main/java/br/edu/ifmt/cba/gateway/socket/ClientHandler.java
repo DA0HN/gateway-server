@@ -5,6 +5,7 @@ import br.edu.ifmt.cba.gateway.utils.Logger;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.Socket;
 
 /**
  * @author daohn on 16/09/2020
@@ -17,7 +18,7 @@ public class ClientHandler extends Thread {
     private final MessageQueue   receiverQueue;
     private final BufferedReader reader;
     private final PrintWriter    writer;
-    private final boolean debug;
+    private final boolean        debug;
 
     public ClientHandler(String name, Logger logger,
                          MessageQueue senderQueue,
@@ -79,6 +80,7 @@ public class ClientHandler extends Thread {
         log("Sender: Esperando resposta...");
 
         String response = reader.readLine();
+        if(response == null) throw new IOException("O cliente não respondeu");
         log("Sender: Chegou uma resposta para '" + message + "' -> " + response);
     }
 

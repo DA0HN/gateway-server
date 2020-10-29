@@ -1,9 +1,8 @@
 package br.edu.ifmt.cba.gateway.app;
 
-import br.edu.ifmt.cba.gateway.modules.ModuleFactory;
-import br.edu.ifmt.cba.gateway.service.Telegraphist;
 import br.edu.ifmt.cba.gateway.socket.MessageQueue;
 import br.edu.ifmt.cba.gateway.socket.Server;
+import br.edu.ifmt.cba.gateway.socket.debug.MessageDebug;
 import br.edu.ifmt.cba.gateway.utils.Logger;
 
 /**
@@ -21,11 +20,11 @@ public class App {
             var port = processArgument(args);
 
             //            new MessageFactory(senderQueue).start();
-            //            new MessageDebug("Store", logger, senderQueue, receiverQueue).start();
-            new Telegraphist(receiverQueue,
-                             senderQueue,
-                             new ModuleFactory(receiverQueue, senderQueue)
-            ).start();
+            new MessageDebug("Store", logger, senderQueue, receiverQueue).start();
+            //            new Telegraphist(receiverQueue,
+            //                             senderQueue,
+            //                             new ModuleFactory(receiverQueue, senderQueue)
+            //            ).start();
             new Server(port,
                        senderQueue,
                        receiverQueue
