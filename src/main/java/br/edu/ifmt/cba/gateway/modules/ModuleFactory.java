@@ -2,9 +2,10 @@ package br.edu.ifmt.cba.gateway.modules;
 
 import br.edu.ifmt.cba.gateway.database.DatabaseConnection;
 import br.edu.ifmt.cba.gateway.database.DatabaseException;
+import br.edu.ifmt.cba.gateway.modules.air_conditioner.AirConditionerModule;
 import br.edu.ifmt.cba.gateway.modules.debug.DebugModule;
 import br.edu.ifmt.cba.gateway.socket.MessageQueue;
-import com.google.protobuf.Message;
+import org.hibernate.dialect.Database;
 
 /**
  * @author daohn on 21/09/2020
@@ -32,6 +33,8 @@ public class ModuleFactory {
             switch(project) {
                 case "dbg":
                     return new DebugModule(DatabaseConnection.getEntityManager(), senderQueue);
+                case "arCond":
+                    return new AirConditionerModule(DatabaseConnection.getEntityManager(), senderQueue);
                 default:
                     throw new ModuleException("Project not recognized");
             }
