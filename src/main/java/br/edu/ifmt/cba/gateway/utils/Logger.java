@@ -21,7 +21,15 @@ public class Logger {
         this(System.out);
     }
 
+    private String loggerString() {
+        return "> " + LocalDateTime.now().format(formatter) + " ";
+    }
+
     public void log(String message) {
-        stream.println("> " + LocalDateTime.now().format(formatter) + " " + message);
+        this.stream.println(loggerString() + message);
+    }
+
+    public void log(String message, PrintStream stream) {
+        stream.println(loggerString() + message);
     }
 }
