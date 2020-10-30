@@ -5,7 +5,10 @@ import br.edu.ifmt.cba.gateway.database.DatabaseException;
 import br.edu.ifmt.cba.gateway.modules.air_conditioner.AirConditionerModule;
 import br.edu.ifmt.cba.gateway.modules.debug.DebugModule;
 import br.edu.ifmt.cba.gateway.socket.MessageQueue;
-import org.hibernate.dialect.Database;
+
+import static br.edu.ifmt.cba.gateway.modules.ModuleId.AIR_CONDITIONER;
+import static br.edu.ifmt.cba.gateway.modules.ModuleId.DEBUG;
+
 
 /**
  * @author daohn on 21/09/2020
@@ -31,9 +34,9 @@ public class ModuleFactory {
     public IModule createProtocol(String project) throws ModuleException {
         try {
             switch(project) {
-                case "dbg":
+                case DEBUG:
                     return new DebugModule(DatabaseConnection.getEntityManager(), senderQueue);
-                case "arCond":
+                case AIR_CONDITIONER:
                     return new AirConditionerModule(DatabaseConnection.getEntityManager(), senderQueue);
                 default:
                     throw new ModuleException("Project not recognized");
