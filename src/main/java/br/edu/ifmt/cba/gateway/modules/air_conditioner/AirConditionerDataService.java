@@ -44,12 +44,12 @@ public class AirConditionerDataService {
     }
 
     /**
-     * Consulta o banco de dados baseado no timestamp que está contido na mensagem e é
-     * chave primária do objeto no banco, caso a consulta seja nulo retorna NEW caso contrário
-     * REDUNDANT
+     * Consulta o banco de dados baseado no timestamp que está contido na mensagem e é chave
+     * primária do objeto no banco, caso a consulta seja nulo retorna NEW caso contrário REDUNDANT
+     *
      * @param data objeto que será consultado
-     * @return status de confirmação NEW se o objeto não está no banco
-     * ou REDUNDANT se o objeto já foi inserido
+     * @return status de confirmação NEW se o objeto não está no banco ou REDUNDANT se o objeto já
+     * foi inserido
      */
     public Status getStatus(AirConditionerData data) {
         if(findById(data) == null) {

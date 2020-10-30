@@ -5,10 +5,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 
 /**
  * @author daohn on 29/10/2020
@@ -24,12 +24,12 @@ public class AirConditionerData implements IReceivedData {
 
     @Id
     private Long   timestamp;
-    @Column(name = "_from")
-    private String from;
-    @Column(name = "_to")
-    private String to;
+    private String source;  // mac de origem
+    private String destiny; // mac de destino
 
-    private Long elapsedTime;
+    private Long elapsedTime; // cálculo do tempo decorrido para a mensagem chegar ao banco
+
+    private LocalDateTime created;
 
     private Double temperature;
     private Double humidity;

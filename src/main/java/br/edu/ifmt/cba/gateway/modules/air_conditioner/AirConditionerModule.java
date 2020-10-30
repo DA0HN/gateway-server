@@ -25,6 +25,12 @@ public class AirConditionerModule implements IModule {
     private final AirConditionerBroadcaster       broadcaster;
     private final AirConditionerMessageIdentifier identifier;
 
+
+    // flags
+    private boolean newStatus = true;
+    private boolean redundantStatus = false;
+    private boolean allStatus = false;
+
     public AirConditionerModule(EntityManager manager, MessageQueue senderQueue) {
         this.logger      = new Logger();
         this.protocol    = new AirConditionerProtocol();
@@ -40,24 +46,40 @@ public class AirConditionerModule implements IModule {
             var data = (AirConditionerData) protocol.parse(message);
 
             status = service.getStatus(data);
-            if(REDUNDANT.equals(status)) {
-                service.save(data);
-            }
+
+            var elapsedTimeInSecond = (double)data.getElapsedTime()/1000;
+            if(elapsedTimeInSecond > 30 || elapsedTimeInSecond < -30)
+                throw new ProtocolException("A mensagem: "+ message +" não possui um timestamp " +
+                                                    "valido!");
 
             if(NEW.equals(status)) {
+                service.save(data);
                 broadcaster.createReply(data);
             }
         }
         catch(DatabaseException | ProtocolException e) {
             status = Status.CORRUPTED;
-            System.err.println(e.getMessage());
+            logger.log("\t" + e.getMessage(), System.err);
         }
         catch(Exception e) {
             status = Status.ERROR;
-            System.err.println(e.getMessage());
+            logger.log("\t" + e.getMessage(), System.err);
         }
         finally {
-            logger.log("\n\tMensagem: " + message + "\n\tStatus: " + status);
+            logMessage(message, status);
+        }
+    }
+
+
+    private void logMessage(String message, Status status) {
+        if((newStatus && NEW.equals(status)) || allStatus) {
+            logger.log(protocol.getMessageStatistics());
+            logger.log("\tMensagem: " + message + "\n\t\t\t\t\tStatus: " + status);
+        }
+
+        if((redundantStatus && REDUNDANT.equals(status)) || allStatus) {
+            logger.log(protocol.getMessageStatistics());
+            logger.log("\tMensagem: " + message + "\n\t\t\t\t\tStatus: " + status);
         }
     }
 }
