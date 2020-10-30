@@ -12,4 +12,8 @@ public enum Constants {
     Constants(String data) {
         this.data = data;
     }
+
+    public String getData() {
+        return data;
+    }
 }

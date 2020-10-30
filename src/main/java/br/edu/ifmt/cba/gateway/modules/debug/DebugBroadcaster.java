@@ -26,7 +26,7 @@ public class DebugBroadcaster {
     public void createReply(DebugData debugData) {
         var confirmMessage = debugData.getTo() + "!" + debugData.getFrom() + "!" +  "OK";
         long raw = System.currentTimeMillis();
-        var anotherMessage = GATEWAY_MAC + "!" + "3c:71:bf:5a:b3:48!b8:27" + "!" + raw;
+        var anotherMessage = GATEWAY_MAC.getData() + "!" + "3c:71:bf:5a:b3:48!b8:27" + "!" + raw;
         senderQueue.enqueue(confirmMessage);
         senderQueue.enqueue(anotherMessage);
     }
