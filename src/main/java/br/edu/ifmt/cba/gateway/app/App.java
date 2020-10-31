@@ -4,6 +4,7 @@ import br.edu.ifmt.cba.gateway.modules.ModuleFactory;
 import br.edu.ifmt.cba.gateway.service.Telegraphist;
 import br.edu.ifmt.cba.gateway.socket.MessageQueue;
 import br.edu.ifmt.cba.gateway.socket.Server;
+import br.edu.ifmt.cba.gateway.socket.debug.MessageFactory;
 import br.edu.ifmt.cba.gateway.utils.Logger;
 
 /**

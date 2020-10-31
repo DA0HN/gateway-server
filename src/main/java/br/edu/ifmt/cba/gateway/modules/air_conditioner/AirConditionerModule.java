@@ -49,8 +49,8 @@ public class AirConditionerModule implements IModule {
 
             var elapsedTimeInSecond = (double)data.getElapsedTime()/1000;
             if(elapsedTimeInSecond > 30 || elapsedTimeInSecond < -30)
-                throw new ProtocolException("A mensagem: "+ message +" não possui um timestamp " +
-                                                    "valido!");
+                throw new ProtocolException("A mensagem: ["+ message +"]\nnão possui um timestamp" +
+                                                    " valido!Diferença de " + elapsedTimeInSecond + " segundos!");
 
             if(NEW.equals(status)) {
                 service.save(data);
