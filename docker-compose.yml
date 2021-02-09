@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  database:
+    container_name: gateway-server-db
+    image: br.edu.ifmt.gateway/gateway-server-db
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: gateway_server
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+    volumes:
+      - gateway-server-db-volume:/var/lib/mysql
+    restart: on-failure
+    networks:
+      - gateway-server
+networks:
+  gateway-server:
+    driver: bridge
+volumes:
+  gateway-server-db-volume:
+    external: true
